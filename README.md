@@ -1,60 +1,12 @@
 # Bài 2: RESTful API với ASP.NET Core
 
-## Mục tiêu
+Repository gồm hai phần thực hành độc lập: Catalog API quản lý sản phẩm và EduSubmit API quản lý bài tập/lượt nộp. Cả hai dùng ASP.NET Core Minimal API, .NET 10 và dữ liệu trong bộ nhớ.
 
-Xây dựng RESTful API quản lý danh mục sản phẩm, thực hành các phương thức HTTP, kiểm tra dữ liệu đầu vào và xử lý mã trạng thái HTTP.
+## Catalog
 
-## Catalog API
+`Catalog/` cung cấp Minimal API và console client. API quản lý danh sách sản phẩm trong bộ nhớ, tra cứu theo ID và tạo sản phẩm mới. Dữ liệu khởi tạo gồm ba sản phẩm; dữ liệu tạo mới chỉ tồn tại trong phiên chạy hiện tại. Client dùng `HttpClient` để đọc danh sách, tạo sản phẩm hợp lệ, đọc chi tiết và gửi dữ liệu không hợp lệ.
 
-`Catalog.Api` cung cấp danh sách sản phẩm trong bộ nhớ, tra cứu theo ID và tạo sản phẩm mới. Dữ liệu khởi tạo gồm ba sản phẩm; dữ liệu tạo mới chỉ tồn tại trong phiên chạy hiện tại.
-
-## Catalog Client
-
-`Catalog.Client` là ứng dụng console dùng `HttpClient` để đọc danh sách, tạo sản phẩm hợp lệ, đọc chi tiết và gửi dữ liệu không hợp lệ nhằm minh họa phản hồi API.
-
-## Công nghệ
-
-- .NET 10 / ASP.NET Core Minimal API
-- C# và `HttpClient`
-- HTTP/JSON
-
-## Cấu trúc
-
-```text
-PTUDPT-Bai2-RESTful-API/
-├── Catalog/
-│   ├── src/
-│   │   ├── Catalog.Api/
-│   │   └── Catalog.Client/
-│   ├── CatalogApi.slnx
-│   ├── requests.http
-│   ├── sp-hop-le.json
-│   ├── sp-sai.json
-│   └── README.md
-├── EduSubmit/
-├── .gitignore
-└── README.md
-```
-
-## Cài đặt và chạy
-
-Cài .NET 10 SDK. Chạy lệnh từ thư mục gốc repository:
-
-```powershell
-dotnet restore Catalog/CatalogApi.slnx
-dotnet build Catalog/CatalogApi.slnx
-dotnet run --project Catalog/src/Catalog.Api/Catalog.Api.csproj --launch-profile http
-```
-
-API mặc định chạy tại `http://localhost:5100`. Mở terminal khác để chạy client:
-
-```powershell
-dotnet run --project Catalog/src/Catalog.Client/Catalog.Client.csproj
-```
-
-Có thể truyền URL API khác làm tham số đầu tiên cho client.
-
-## Endpoint
+### Endpoint Catalog
 
 | Phương thức | Đường dẫn | Mô tả |
 |---|---|---|
@@ -65,19 +17,38 @@ Có thể truyền URL API khác làm tham số đầu tiên cho client.
 
 POST nhận JSON gồm `name`, `description`, `price`; tên không được để trống và giá phải lớn hơn 0.
 
-## Kiểm thử bằng requests.http
+### Chạy Catalog
 
-Chạy API, sau đó mở `Catalog/requests.http` bằng REST Client của Visual Studio Code hoặc HTTP Client trong IDE. Gửi lần lượt các request để kiểm tra danh sách, chi tiết, ID không tồn tại/không hợp lệ, tạo mới và dữ liệu không hợp lệ. Tệp cũng có ví dụ thiếu Content-Type và phương thức PUT không được hỗ trợ.
+Cài .NET 10 SDK. Chạy lệnh từ thư mục gốc repository:
 
-## Mã trạng thái HTTP
+```powershell
+dotnet restore Catalog/CatalogApi.slnx
+dotnet build Catalog/CatalogApi.slnx
+dotnet run --project Catalog/src/Catalog.Api/Catalog.Api.csproj --launch-profile http
+```
 
-- `200 OK`: đọc thành công.
-- `201 Created`: tạo sản phẩm thành công; header `Location` trỏ tới tài nguyên mới.
-- `400 Bad Request`: dữ liệu sản phẩm không hợp lệ.
-- `404 Not Found`: không tìm thấy sản phẩm hoặc đường dẫn không khớp.
-- `405 Method Not Allowed`: phương thức không được endpoint hỗ trợ.
-- `415 Unsupported Media Type`: nội dung POST không có Content-Type JSON phù hợp.
+Catalog API mặc định chạy tại `http://localhost:5100`. Mở terminal khác để chạy client:
 
-## Kết quả kiểm thử
+```powershell
+dotnet run --project Catalog/src/Catalog.Client/Catalog.Client.csproj
+```
 
-Chạy `dotnet restore Catalog/CatalogApi.slnx` và `dotnet build Catalog/CatalogApi.slnx` từ thư mục gốc để xác nhận restore và build thành công.
+Có thể truyền URL API khác làm tham số đầu tiên cho client. Mở `Catalog/requests.http` bằng REST Client của VS Code hoặc HTTP Client trong IDE để kiểm tra các trường hợp thành công và lỗi. Xem thêm [Catalog/README.md](Catalog/README.md).
+
+## EduSubmit
+
+`EduSubmit/` là phần Client - Server của bài thực hành. Minimal API cung cấp danh sách bài tập và tạo/đọc/xóa lượt nộp; console client dùng `HttpClient`. Dữ liệu lượt nộp chỉ lưu trong List RAM của tiến trình API.
+
+```powershell
+dotnet restore EduSubmit/RestfulClientServer.slnx
+dotnet build EduSubmit/RestfulClientServer.slnx
+dotnet run --project EduSubmit/src/Submission.Api/Submission.Api.csproj --urls http://localhost:5000
+```
+
+API chạy tại `http://localhost:5000`. Mở PowerShell khác để chạy Client:
+
+```powershell
+dotnet run --project EduSubmit/src/Submission.Client/Submission.Client.csproj
+```
+
+Hướng dẫn đầy đủ, hợp đồng API, curl/PowerShell và các thử nghiệm xem [EduSubmit/README.md](EduSubmit/README.md). Mở `EduSubmit/requests.http` bằng REST Client/HTTP Client để gửi request mẫu.

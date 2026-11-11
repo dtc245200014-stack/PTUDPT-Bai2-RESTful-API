@@ -1,0 +1,16 @@
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
+*.rsuser
+*.sln.docstates
+.idea/
+.env
+.env.*
+!.env.example
+*.pfx
+*.publishsettings
+Thumbs.db
+Desktop.ini
+.DS_Store
